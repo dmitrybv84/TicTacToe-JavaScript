@@ -1,0 +1,11 @@
+{
+  "name": "demo-project",
+  "description": "A demo project",
+  "version": "0.0.1",
+  "homepage": "https://github.com/dmitrybv84",
+  "dependencies": {
+    "toastr": "~2.1.1",
+    "html5-boilerplate": "~5.2.0",
+    "jquery": "~2.1.4"
+  }
+}
