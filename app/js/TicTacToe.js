@@ -51,7 +51,7 @@ var TicTacToe = (function() {
 	 */
 	var emptyCellText = '-';
 
-	var board = [], combos = [], undef, grid = 3, size = 100, intelligence = 6;
+	var board = [], undef, grid = 3, size = 100, intelligence = 6;
 
 	/**
 	 * Method reset the game. Set all the cells text to empty text and removes css classes
@@ -86,7 +86,7 @@ var TicTacToe = (function() {
 		return true;
 	};
 
-	function won(playerCombination) {
+	var won = function(playerCombination) {
 		return winCombinations.some(function(combination) {
 			if (isSubset(combination, playerCombination)) {
 				winCombination = combination;
@@ -95,7 +95,7 @@ var TicTacToe = (function() {
 				return false;
 			}
 		});
-	}
+	};
 
 
 	/**
@@ -121,10 +121,10 @@ var TicTacToe = (function() {
 	 *
 	 * @param {String} message
 	 */
-	var gameOver = function(message) {
+	var gameOver = function(message, tie) {
 		var me = this;
 		toastr.info(message);
-		if (winCombination) {
+		if (winCombination && !tie) {
 			winCombination.forEach(function(item) {
 				$('#c-' + item).addClass('winner-cell');
 			});
@@ -176,24 +176,24 @@ var TicTacToe = (function() {
 			toastr.warning('The cell is already selected');
 			return false;
 		}
+		// draw X
 		draw(id, 1);
-
 		if (chk(0) > 0) {
 			gameOver('X wins. Restart the game.');
 			return false;
 		}
+		//calculate next move
 		next = search(0, 1, -size, size);
 		if (next === 0) {
-			gameOver('Its a tie. Restart the game.');
+			gameOver('Its a tie. Restart the game.', true);
 			return false;
 		}
+		//draw O
 		draw(next, -1);
 		if (chk(0) < 0) {
 			gameOver('O wins. Restart the game.');
 			return false;
 		}
-
-
 	};
 
 	return {
