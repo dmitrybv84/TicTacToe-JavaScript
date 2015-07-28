@@ -21,13 +21,6 @@ var TicTacToe = (function() {
 
 	/**
 	 *
-	 * @type {number} count
-	 * Used to determine current turn
-	 * @private
-	 */
-	var count = 0;
-	/**
-	 *
 	 * @type {boolean}
 	 * @private
 	 */
@@ -50,8 +43,26 @@ var TicTacToe = (function() {
 	 * @private
 	 */
 	var emptyCellText = '-';
-
-	var board = [], undef, grid = 3, size = 100, intelligence = 6;
+	/**
+	 *
+	 * @type {Array} board
+	 */
+	var board = [];
+	/**
+	 *
+	 * @type {Number} gridSize
+	 */
+	var gridSize = 3;
+	/**
+	 *
+	 * @type {number} alphaBeta
+	 */
+	var alphaBeta = 100;
+	/**
+	 * intelligence factor (recursion cutoff)
+	 * @type {Number} intelligence
+	 */
+	var intelligence = 6;
 
 	/**
 	 * Method reset the game. Set all the cells text to empty text and removes css classes
@@ -113,8 +124,8 @@ var TicTacToe = (function() {
 			}
 		});
 
-		if (won(xCells)) { return size - depth;}
-		if (won(oCells)) { return depth - size;}
+		if (won(xCells)) { return alphaBeta - depth;}
+		if (won(oCells)) { return depth - alphaBeta;}
 	};
 
 	/**
@@ -136,7 +147,7 @@ var TicTacToe = (function() {
 	// http://en.wikipedia.org/wiki/Negamax
 	// http://en.wikipedia.org/wiki/Alpha-beta_pruning
 	var search = function(depth, player, alpha, beta){
-		var i = grid * grid, min = -size, max, value, next;
+		var i = gridSize * gridSize, min = -alphaBeta, max, value, next;
 		if (value = chk(depth)) // either player won
 			return value * player;
 		if (intelligence > depth){ // recursion cutoff
@@ -144,8 +155,8 @@ var TicTacToe = (function() {
 				if (!board[i]){
 					board[i] = player;
 					value = -search(depth + 1, -player, -beta, -alpha);
-					board[i] = undef;
-					if (max === undef || value > max) max = value;
+					board[i] = undefined;
+					if (max === undefined || value > max) max = value;
 					if (value > alpha) alpha = value;
 					if (alpha >= beta) return alpha; // prune branch
 					if (max > min){ min = max; next = i; } // best odds for next move
@@ -183,7 +194,7 @@ var TicTacToe = (function() {
 			return false;
 		}
 		//calculate next move
-		next = search(0, 1, -size, size);
+		next = search(0, 1, -alphaBeta, alphaBeta);
 		if (next === 0) {
 			gameOver('Its a tie. Restart the game.', true);
 			return false;
