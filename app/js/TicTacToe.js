@@ -51,6 +51,8 @@ var TicTacToe = (function() {
 	 */
 	var emptyCellText = '-';
 
+	var board = [];
+
 	/**
 	 * Method reset the game. Set all the cells text to empty text and removes css classes
 	 * Reset all the values back to their initial values
@@ -65,6 +67,7 @@ var TicTacToe = (function() {
 		count = 0;
 		gameIsOver = false;
 		winCombination = [];
+		board = [];
 	};
 
 	/**
@@ -92,16 +95,15 @@ var TicTacToe = (function() {
 	 * @returns {boolean} true in case there is a winner
 	 */
 	var weHaveAWinner = function(playerName) {
-		//select all the buttons
-		var selected = $('.' + playerName),
-			selectedIds = [];
-		//get the id integer number and push it in the array of selected ids
-		for (var i=0;i<selected.length;i++) {
-			selectedIds.push(~~(selected[i].id.slice(-1)));
-		}
+		var selectedCells = [];
+		board.forEach(function(item, index) {
+			if (item === playerName) {
+				selectedCells.push(index);
+			}
+		});
 		// if one of the win combinations is a subset of the selected ids then we have the winner
 		return winCombinations.some(function(combination) {
-			if (isSubset(combination, selectedIds)) {
+			if (isSubset(combination, selectedCells)) {
 				winCombination = combination;
 				return true;
 			} else {
@@ -137,9 +139,12 @@ var TicTacToe = (function() {
 			return false;
 		}
 
-		if ($(this).hasClass('selected')) {
+		var id = $(this).context.id.slice(-1);
+		if (board[id]) {
 			toastr.warning('The cell is already selected');
 			return false;
+		} else {
+			board[id] = (count % 2 == 0 ? oName : xName);
 		}
 
 		$(this).text(count % 2 == 0 ? oName : xName);
